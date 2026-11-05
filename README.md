@@ -1,27 +1,56 @@
+<div align="center">
+
 # Circle Recommendations
 
-`GET /users/:id/recommendations` returns a ranked list of Circles a member should join, each with a
-short, member-facing explanation. Zero npm dependencies: Node + SQLite (`node:sqlite`).
+### Explainable, personalized Circle discovery for Lean In
 
-- **Design doc (1 page):** [docs/DESIGN.md](docs/DESIGN.md)
-- **Schema, relationships, indexes:** [docs/SCHEMA.md](docs/SCHEMA.md) · DDL in [src/schema.sql](src/schema.sql)
+A full-stack recommendation experience that helps members find relevant, active, and welcoming communities — with clear reasons behind every suggestion.
 
-## Run it
+**[🌐 Try the Live Demo](https://leanin-circle-recommendations.onrender.com/)** · **[🔌 Try the API](https://leanin-circle-recommendations.onrender.com/users/7/recommendations)** · **[📐 Technical Design](docs/DESIGN.md)**
 
-Requires **Node >= 22.13** (uses the built-in `node:sqlite`; no install step).
+</div>
+
+---
+
+## Explore the live application
+
+**[Open the interactive Circle Recommendations demo](https://leanin-circle-recommendations.onrender.com/)**
+
+Choose a member, explore ranked Circles, and toggle **Show scoring and excluded Circles** to understand the recommendations. The demo uses the same Node.js recommendation API as the source project.
+
+> **Note:** The free hosting service may take a little time to wake up on the first visit.
+
+## What it does
+
+| Capability | Implementation |
+| --- | --- |
+| **Personalized matching** | Stated interests, related topics, profile signals, and existing memberships |
+| **Healthy communities** | Recent activity, participation, and Circle engagement |
+| **Joinability** | Capacity, membership policy, and meeting format |
+| **Useful explanations** | Plain-language reasons supported by recommendation signals |
+| **Diverse results** | Near-duplicate suppression and topic diversity |
+| **Cold start** | Welcoming, active Circles without pretending to know the member's interests |
+
+## Built with
+
+**Node.js 22.13+** · **SQLite (`node:sqlite`)** · **JavaScript** · **HTML/CSS** · **Node's built-in test runner**
+
+No external npm dependencies are required.
+
+## Quick start
 
 ```bash
-npm run seed                 # builds db/circles.db from data/*.json (also happens automatically on first start)
-npm start                    # http://localhost:3000   (PORT=4000 npm start to change)
-npm test                     # 8 tests: the 4 planted scenarios + invariants over all 100 users + HTTP contract
-
-# Easiest way to explore: open http://localhost:3000 in a browser (pick a member, tick "Show scoring")
-curl localhost:3000/users/23/recommendations
-curl "localhost:3000/users/23/recommendations?limit=3&debug=1"   # + score components and why Circles were excluded
-npm run recommend -- 15 5 --debug                               # same thing, readable in the terminal
+npm run seed
+npm start
+npm test
 ```
 
-### API
+Visit **http://localhost:3000** for the UI, or request `GET /users/7/recommendations` for JSON.
+
+**Documentation:** [One-page design](docs/DESIGN.md) · [Schema, relationships, and indexes](docs/SCHEMA.md) · [SQL DDL](src/schema.sql)
+
+<details>
+<summary><strong>API reference and example response</strong></summary>
 
 `GET /users/:id/recommendations?limit=5&debug=0|1` (`limit` 1-20, default 5)
 
@@ -45,7 +74,10 @@ npm run recommend -- 15 5 --debug                               # same thing, re
 Errors: `400` bad `limit`, `404` unknown user, `405` non-GET. `personalization.mode` is `personalized`
 (stated interests), `inferred` (only memberships/profile text) or `cold_start` (nothing known).
 
-## What happens to the four planted scenarios
+</details>
+
+<details>
+<summary><strong>Evaluation scenarios and edge cases</strong></summary>
 
 | Scenario | User | Result |
 | --- | --- | --- |
@@ -54,14 +86,33 @@ Errors: `400` bad `limit`, `404` unknown user, `405` non-GET. `personalization.m
 | Duplicates | 15 | Exactly one of #10/#11/#12; the other two appear in `similar_circles`. The rest of the list covers her second interest (confidence → #13) and adjacent topics. |
 | Full / inactive | 23 | #20 (full) and #21 (dormant, and unlisted) are filtered out; #22 Level Up is #1. `?debug=1` prints every exclusion with its reason. |
 
-## Things worth knowing
+</details>
+
+<details>
+<summary><strong>Implementation notes and local commands</strong></summary>
+
+Requires **Node >= 22.13** (uses the built-in `node:sqlite`; no install step).
+
+```bash
+npm run seed                 # builds db/circles.db from data/*.json (also happens automatically on first start)
+npm start                    # http://localhost:3000   (PORT=4000 npm start to change)
+npm test                     # 8 tests: the 4 planted scenarios + invariants over all 100 users + HTTP contract
+
+# Easiest way to explore: open http://localhost:3000 in a browser (pick a member, tick "Show scoring")
+curl localhost:3000/users/23/recommendations
+curl "localhost:3000/users/23/recommendations?limit=3&debug=1"   # + score components and why Circles were excluded
+npm run recommend -- 15 5 --debug                               # same thing, readable in the terminal
+```
 
 - **"Now" is the dataset snapshot, not the wall clock.** The data is anchored at 2026-09-21; against today's
   date every Circle would look 6+ weeks dormant. `as_of` defaults to the newest timestamp in the data. Override with `AS_OF=now` or `AS_OF=2026-10-01`.
 - Circles have no location field, so in-person Circles are treated as a riskier recommendation than virtual/hybrid (see DESIGN.md).
 - Weights and thresholds are all in [src/config.js](src/config.js).
 
-## Layout
+</details>
+
+<details>
+<summary><strong>Project structure</strong></summary>
 
 ```
 src/schema.sql     DDL (tables, constraints, indexes)
@@ -75,6 +126,8 @@ public/index.html  demo UI (served at /)
 src/server.js      HTTP API   ·   src/cli.js  terminal view
 test/              node:test suite
 ```
+
+</details>
 
 ## How I Used AI
 
