@@ -1,0 +1,14 @@
+{
+  "name": "circle-recommendations",
+  "version": "1.0.0",
+  "description": "Ranked Circle recommendations with member-facing explanations (Lean In take-home)",
+  "type": "module",
+  "private": true,
+  "engines": { "node": ">=22.13" },
+  "scripts": {
+    "seed": "node --disable-warning=ExperimentalWarning src/seed.js",
+    "start": "node --disable-warning=ExperimentalWarning src/server.js",
+    "recommend": "node --disable-warning=ExperimentalWarning src/cli.js",
+    "test": "node --disable-warning=ExperimentalWarning --test test/*.test.js"
+  }
+}
