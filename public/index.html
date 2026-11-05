@@ -19,6 +19,13 @@
   label{display:block;font-size:12px;font-weight:600;color:var(--mute);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
   select{font:inherit;padding:9px 10px;border:1px solid var(--line);border-radius:9px;background:var(--bg);color:var(--ink);min-width:0}
   #user{min-width:260px;max-width:100%} .chk{display:flex;gap:6px;align-items:center;font-size:14px;color:var(--mute);padding-bottom:10px}
+  .score-control{display:flex;align-items:center;gap:10px;min-height:55px;padding:10px 14px;border:1px solid var(--brand);border-radius:12px;background:var(--brand-soft);cursor:pointer;max-width:340px}
+  .score-control input{width:18px;height:18px;accent-color:var(--brand);flex-shrink:0}
+  .score-control strong{display:block;color:var(--brand);font-size:14px;line-height:1.25}
+  .score-control small{display:block;color:var(--mute);font-size:12px;font-weight:400;text-transform:none;letter-spacing:0;margin-top:3px;line-height:1.35}
+  .score-control:focus-within{outline:2px solid var(--brand);outline-offset:2px}
+  .card-title{display:flex;align-items:start;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .score-badge{display:inline-flex;align-items:center;gap:5px;background:var(--brand-soft);color:var(--brand);border:1px solid var(--line);padding:5px 10px;border-radius:99px;font-size:13px;font-weight:700;white-space:nowrap}
   .member{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:16px}
   .member h2{margin:0 0 2px;font-size:18px} .member p{margin:2px 0;color:var(--mute);font-size:14px}
   .badge{display:inline-block;font-size:12px;font-weight:600;padding:2px 9px;border-radius:99px;margin-right:6px;background:var(--brand-soft);color:var(--brand)}
@@ -55,7 +62,7 @@
   <div class="controls">
     <div><label for="user">Member</label><select id="user" aria-label="Member"></select></div>
     <div><label for="limit">How many</label><select id="limit"><option>3</option><option selected>5</option><option>8</option><option>10</option></select></div>
-    <label class="chk"><input type="checkbox" id="debug"> Show scoring and excluded Circles</label>
+    <label class="score-control" for="debug"><input type="checkbox" id="debug"><span><strong>Show how recommendations are ranked</strong><small>View score breakdowns and excluded Circles</small></span></label>
   </div>
   <div id="member"></div>
   <div id="out"><div class="skeleton">Loading…</div></div>
@@ -113,7 +120,7 @@ function card(r) {
   const dbg = r.debug ? `<details><summary>Why this score (${r.score})</summary><div class="bars">${
     Object.entries(r.debug.components).map(([k, v]) => `<span>${k}</span><div class="bar"><i style="width:${Math.round(v * 100)}%"></i></div><span>${v}</span>`).join("")}</div></details>` : "";
   return `<article class="card"><div class="rank">${r.rank}</div><div>
-    <h3>${esc(c.name)}</h3>
+    <div class="card-title"><h3>${esc(c.name)}</h3><span class="score-badge" title="Recommendation ranking score, not a probability">Match score: ${(Number(r.score) * 100).toFixed(1)}%</span></div>
     <div class="topic">${esc(c.topic_label || "Community Circle")}</div>
     <div class="why">${esc(r.explanation)}</div>
     <div class="meta">
