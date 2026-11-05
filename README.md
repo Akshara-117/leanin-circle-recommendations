@@ -18,6 +18,10 @@ A full-stack recommendation experience that helps members find relevant, active,
 
 Choose a member, explore ranked Circles, and toggle **Show scoring and excluded Circles** to understand the recommendations. The demo uses the same Node.js recommendation API as the source project.
 
+### Application preview
+
+![Circle Recommendations demo showing ranked recommendations, visible match scores, and a detailed scoring breakdown](circle-recommendations-preview.png)
+
 > **Note:** The free hosting service may take a little time to wake up on the first visit.
 
 ## What it does
